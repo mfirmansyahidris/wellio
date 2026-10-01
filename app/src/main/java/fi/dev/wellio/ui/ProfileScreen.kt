@@ -15,7 +15,7 @@ import fi.dev.wellio.domain.*
 import java.time.LocalDate
 import java.time.DayOfWeek
 
-@Composable fun ProfileScreen(state: WellnessState, edit: ()->Unit, extra: @Composable ColumnScope.()->Unit = {}) {
+@Composable fun ProfileScreen(state: WellnessState, edit: ()->Unit, onPrivacyPolicy: ()->Unit = {}, extra: @Composable ColumnScope.()->Unit = {}) {
     val profile = state.profile ?: return
     val today=LocalDate.now()
     val monday=today.with(DayOfWeek.MONDAY)
@@ -52,6 +52,7 @@ import java.time.DayOfWeek
             Text("Saving preferences refreshes pending activities. Completed activities and your history stay with you.", style=MaterialTheme.typography.bodySmall)
         }
         extra()
+        TextButton(onClick=onPrivacyPolicy) { Text("Privacy Policy") }
         Text("Wellio 0.1 · Built around your everyday\nNo account. No calorie counting. Just small steps.", style=MaterialTheme.typography.bodySmall, color=Ink.copy(alpha=.65f))
     }
 }

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
     val busy by vm.busy.collectAsStateWithLifecycle()
     val message by vm.message.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(false) }
+    var showPrivacyPolicy by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     var todayDate by remember { mutableStateOf(LocalDate.now().toString()) }
@@ -48,17 +49,19 @@ import androidx.lifecycle.compose.LifecycleEventEffect
             else if (current.profile == null || editing) Onboarding(initial=current.profile ?: fi.dev.wellio.domain.UserProfile(), editing=editing, busy=busy,
                 save={ vm.saveProfile(it) { editing=false } }, cancel={editing=false})
             else {
+                if (showPrivacyPolicy) PrivacyPolicyScreen(onBack={showPrivacyPolicy=false}) else {
                 val day = current.days.find { it.date == selectedDate } ?: current.days.lastOrNull()
                 if (day != null) when(tab) {
                     0 -> TodayScreen(current, day, {selectedDate=it}, {tab=1}, {tab=2}, {taskId=it.id})
                     1 -> WorkoutScreen(day, busy, {selectedDate=it}, {vm.completeSet(day.date,it)}, {vm.finishWorkout(day.date)}, {vm.replaceWorkout(day.date,it)})
                     2 -> MealsScreen(day, busy, {selectedDate=it}, {kind,reason->vm.replaceMeal(day.date,kind,reason)}, {vm.setTask(day.date,it.id,Status.COMPLETED)})
-                    3 -> ProfileScreen(current, {editing=true}) { AiSettings(current.profile, vm.ai.configured, busy, vm::enableAi, vm::generateAiWeek) }
+                    3 -> ProfileScreen(current, {editing=true}, onPrivacyPolicy={showPrivacyPolicy=true}) { AiSettings(current.profile, vm.ai.configured, busy, vm::enableAi, vm::generateAiWeek) }
                 }
                 day?.tasks?.find { it.id == taskId }?.let { task ->
                     TaskDialog(task, LocalDate.parse(day.date).isAfter(LocalDate.now()), {taskId=null}, {vm.setReminder(day.date, task.id, it)}) { status, time ->
                         vm.setTask(day.date, task.id, status, time); taskId=null
                     }
+                }
                 }
             }
             if(busy && current?.profile != null && !editing) LinearProgressIndicator(Modifier.fillMaxWidth())
