@@ -2,7 +2,7 @@
 
 Integrasi sudah ada dalam sumber dan ikut dikompilasi. Tanpa konfigurasi Firebase, aplikasi tetap bisa digunakan dalam mode lokal.
 
-1. Buat/pilih Firebase project milik Anda. Daftarkan aplikasi Android dengan package `com.wellio.app`.
+1. Buat/pilih Firebase project milik Anda. Daftarkan aplikasi Android dengan package `com.fi.wellio`.
 2. Aktifkan Firebase AI Logic menggunakan Gemini Developer API sesuai konsol Firebase.
 3. Unduh `google-services.json` ke `app/google-services.json`. File ini diabaikan Git. Jangan menaruh Gemini API key dalam kode atau aset aplikasi.
 4. Daftarkan App Check. Build debug menggunakan `DebugAppCheckProviderFactory`; daftarkan token debug dari perangkat uji di konsol, lalu jangan membagikan token tersebut. Build release menggunakan Play Integrity. Aktifkan enforcement Firebase AI Logic setelah konfigurasi App Check tervalidasi.

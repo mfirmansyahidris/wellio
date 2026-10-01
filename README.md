@@ -2,6 +2,8 @@
 
 **Small steps. A healthier you.** Aplikasi Android wellness berdasarkan konteks yang diberikan: rencana harian, gerak ringan, ide makanan, rutinitas, pengingat, dan progres sederhana.
 
+Android application ID dan namespace: `com.fi.wellio`.
+
 ## Jalankan proyek
 
 1. Buka direktori `wellio` di Android Studio.
