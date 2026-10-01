@@ -8,3 +8,5 @@ app/google-services.json
 *.jks
 *.keystore
 .DS_Store
+
+app/release/

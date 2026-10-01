@@ -2,7 +2,7 @@
 
 **Small steps. A healthier you.** Wellio is an Android wellness application based on the supplied product concept. It provides a daily plan, gentle movement, meal ideas, routines, reminders, and simple progress tracking.
 
-Android application ID and namespace: `com.fi.wellio`.
+Android application ID and namespace: `fi.dev.wellio`.
 
 ## Run the project
 

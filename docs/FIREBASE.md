@@ -2,7 +2,7 @@
 
 The Firebase integration is implemented and compiled into the application. The local planner remains available when Firebase is not configured.
 
-1. Create or select a Firebase project and register an Android application with package name `com.fi.wellio`.
+1. Create or select a Firebase project and register an Android application with package name `fi.dev.wellio`.
 2. Enable Firebase AI Logic with the Gemini Developer API in Firebase Console.
 3. Download `google-services.json` to `app/google-services.json`. This file is ignored by Git. Never place a Gemini API key directly in source code or application assets.
 4. Register App Check. Debug builds use `DebugAppCheckProviderFactory`; register the debug token shown by the test device and never share it. Release builds use Play Integrity. Enable Firebase AI Logic enforcement after App Check has been verified.
@@ -27,4 +27,10 @@ The Firebase integration is implemented and compiled into the application. The l
 - [App Check for AI Logic](https://firebase.google.com/docs/ai-logic/app-check)
 - [Supported models](https://firebase.google.com/docs/ai-logic/models)
 
-The current `google-services.json` is registered for `com.fi.wellio`. A successful build confirms client configuration parsing but does not prove that Gemini requests, quotas, billing, or App Check enforcement work in the Firebase project. Those items require a live cloud test.
+## Package migration to `fi.dev.wellio`
+
+The local `google-services.json` inspected during migration is still registered for `com.fi.wellio`. Register a new Android app with package name `fi.dev.wellio` in the existing Firebase project, then replace `app/google-services.json` with the downloaded configuration. Do not manually change `package_name` in the old file; the Firebase app registration must match as well.
+
+Configure App Check for the new Firebase Android app and register the signing certificate fingerprints used for testing and Google Play distribution. Generate a new signed release bundle after replacing the configuration. Bundles generated before this migration still use the old package name.
+
+Package migration builds were checked in local mode with the old Firebase configuration temporarily removed. Builds with that old file present will fail client matching until it is replaced. A successful build with the new file confirms client configuration parsing but does not prove that Gemini requests, quotas, billing, or App Check enforcement work in the Firebase project. Those items require a live cloud test.

@@ -24,7 +24,14 @@ The application APK and AndroidTest APK were installed on a dedicated developmen
 - Full UI flow from onboarding through Today, completion, activity recreation, meal replacement, workout sets, and Profile.
 - Invalid time input, rescheduling, skipping, and resetting a task to pending.
 - WorkManager retains identical pending work, replaces it when a schedule changes, and cancels it when a task is completed.
-- The package migration to `com.fi.wellio`, including manifest components, Firebase resources, unit tests, and device tests.
+- The earlier package migration to `com.fi.wellio`, including manifest components, Firebase resources, unit tests, and device tests.
+
+## Package migration to `fi.dev.wellio`
+
+- Updated the application ID, namespace, Kotlin source and test packages, source directory layout, and Room schema location.
+- `testDebugUnitTest` and `assembleDebug` passed with the old Firebase configuration temporarily removed. The pre-existing local edit in `PlanValidation.kt` was excluded from this test run and is not included in the migration commit.
+- `bundleRelease` and `compileDebugAndroidTestKotlin` passed in local mode. The debug APK package, release manifest, and manifest embedded in the unsigned AAB use `fi.dev.wellio`. The local Firebase configuration was restored after validation.
+- The earlier emulator and Firebase-resource checks above do not validate the new package. Firebase configuration for `fi.dev.wellio` must be downloaded before building a release with Firebase enabled.
 
 ## Validation limits
 

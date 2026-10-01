@@ -7,10 +7,10 @@ plugins {
 }
 if (file("google-services.json").exists()) apply(plugin = "com.google.gms.google-services")
 android {
-    namespace = "com.fi.wellio"
+    namespace = "fi.dev.wellio"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.fi.wellio"
+        applicationId = "fi.dev.wellio"
         minSdk = 26
         targetSdk = 36
         buildConfigField("String", "WELLIO_AI_MODEL", "\"" + providers.gradleProperty("wellioAiModel").getOrElse("gemini-3.8-flash") + "\"")
