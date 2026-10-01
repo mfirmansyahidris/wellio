@@ -41,4 +41,11 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
             store.update { old -> old.copy(days = (old.days + days.filter { day -> old.days.none { it.date == day.date } }).sortedBy { it.date }) }
         }
     }
+    fun setTask(date: String, id: String, status: Status, time: String? = null) = action {
+        if (time != null) java.time.LocalTime.parse(time)
+        store.update { current -> current.changeDay(date) { day -> day.copy(tasks = day.tasks.map {
+            if (it.id == id) it.copy(status = status, time = time ?: it.time) else it
+        }) } }
+    }
+
 }

@@ -10,6 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wellio.app.WellioViewModel
+import com.wellio.app.domain.*
+import java.time.LocalDate
+import kotlinx.coroutines.delay
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 
 @Composable fun WellioApp(vm: WellioViewModel) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -17,6 +22,15 @@ import com.wellio.app.WellioViewModel
     val message by vm.message.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    var taskId by rememberSaveable { mutableStateOf<String?>(null) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.ensureDays() }
+    LaunchedEffect(state?.profile != null) {
+        if (state?.profile != null) {
+            vm.ensureDays()
+            while(true) { delay(60_000); vm.ensureDays() }
+        }
+    }
     val snack = remember { SnackbarHostState() }
     LaunchedEffect(message) { message?.let { snack.showSnackbar(it); vm.dismissMessage() } }
     Scaffold(snackbarHost={SnackbarHost(snack)}, bottomBar={
@@ -31,10 +45,19 @@ import com.wellio.app.WellioViewModel
             if (current == null) CircularProgressIndicator(Modifier.padding(32.dp))
             else if (current.profile == null || editing) Onboarding(initial=current.profile ?: com.wellio.app.domain.UserProfile(), editing=editing, busy=busy,
                 save={ vm.saveProfile(it) { editing=false } }, cancel={editing=false})
-            else Column(Modifier.padding(24.dp), verticalArrangement=Arrangement.spacedBy(20.dp)) {
-                Heading("Hello, ${current.profile.name.ifBlank { "you" }}.", "Your seven-day plan is ready.")
-                SoftCard(Lime) { Text("${current.days.size} days of small wins"); Text("${current.profile.minutes} minutes of movement, meals, and space to unwind.") }
-                PrimaryButton("Edit preferences", onClick={editing=true})
+            else {
+                val day = current.days.find { it.date == selectedDate } ?: current.days.lastOrNull()
+                if (day != null) when(tab) {
+                    0 -> TodayScreen(current, day, {selectedDate=it}, {tab=1}, {tab=2}, {taskId=it.id})
+                    1 -> Column(Modifier.padding(24.dp)) { Heading(day.workout.title, "${day.workout.minutes} minutes of movement") }
+                    2 -> Column(Modifier.padding(24.dp)) { Heading("Nourish your day", "${day.meals.size} meal ideas, picked for you.") }
+                    3 -> ProfileScreen(current, {editing=true})
+                }
+                day?.tasks?.find { it.id == taskId }?.let { task ->
+                    TaskDialog(task, LocalDate.parse(day.date).isAfter(LocalDate.now()), {taskId=null}) { status, time ->
+                        vm.setTask(day.date, task.id, status, time); taskId=null
+                    }
+                }
             }
         }
     }
