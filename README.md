@@ -1,16 +1,16 @@
 # Wellio
 
-**Small steps. A healthier you.** Aplikasi Android wellness berdasarkan konteks yang diberikan: rencana harian, gerak ringan, ide makanan, rutinitas, pengingat, dan progres sederhana.
+**Small steps. A healthier you.** Wellio is an Android wellness application based on the supplied product concept. It provides a daily plan, gentle movement, meal ideas, routines, reminders, and simple progress tracking.
 
-Android application ID dan namespace: `com.fi.wellio`.
+Android application ID and namespace: `com.fi.wellio`.
 
-## Jalankan proyek
+## Run the project
 
-1. Buka direktori `wellio` di Android Studio.
-2. Gunakan JDK 17 atau 21, Android SDK 36, dan perangkat/emulator Android 8.0 (API 26) atau lebih baru.
-3. Biarkan Android Studio membuat `local.properties`, lalu tekan **Run**.
+1. Open the `wellio` directory in Android Studio.
+2. Use JDK 17 or 21, Android SDK 36, and a device or emulator running Android 8.0 (API 26) or later.
+3. Allow Android Studio to create `local.properties`, then press **Run**.
 
-Dari terminal dengan `JAVA_HOME` dan `ANDROID_HOME` yang sesuai:
+From a terminal with suitable `JAVA_HOME` and `ANDROID_HOME` values:
 
 ```sh
 ./gradlew assembleDebug
@@ -18,51 +18,51 @@ Dari terminal dengan `JAVA_HOME` dan `ANDROID_HOME` yang sesuai:
 ./gradlew connectedDebugAndroidTest
 ```
 
-APK debug berada di `app/build/outputs/apk/debug/app-debug.apk`. Gradle Wrapper disertakan. Versi dependensi dipatok agar build dapat direproduksi; proyek tidak mengklaim memakai versi paling baru.
+The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. The Gradle Wrapper is included. Dependency versions are pinned for reproducible builds; the project does not claim to use every latest release.
 
-## Fitur yang tersedia
+## Available features
 
-- Onboarding singkat: maksimal dua goal, aktivitas, pengalaman, waktu, lokasi, peralatan, pola makan, cuisine, prioritas, dan makanan yang dihindari.
-- Rencana lokal tujuh hari tanpa akun atau koneksi internet setelah aplikasi terpasang. Seluruh preferensi tersimpan; katalog lokal memprioritaskan batasan makanan, cuisine, kecepatan persiapan, dan protein/sayur sesuai pilihan.
-- Empat tujuan navigasi: **Today, Workout, Meals, Profile**.
-- Status aktivitas pending, completed, skipped, rescheduled; jam dapat diubah dalam hari yang dipilih.
-- Sesi workout per set, bisa dijeda dan dilanjutkan setelah aplikasi dibuka ulang. Durasi adalah perkiraan, bukan stopwatch atau target yang wajib dipenuhi.
-- Penggantian workout berdasarkan alasan, serta penggantian satu meal tanpa mengubah meal lainnya.
-- Bahan dan langkah memasak sederhana; tanpa calorie counting.
-- Pengingat per aktivitas dengan izin notifikasi Android dan WorkManager. Waktu pengiriman bersifat perkiraan. Jam yang sudah lewat tidak membuat pengingat baru.
-- Progres mingguan, persentase aktivitas selesai, streak, dan riwayat lokal. Satu aktivitas selesai per hari mempertahankan streak; skip tidak menambah progres.
-- Firebase AI Logic opsional: generasi tujuh hari, penggantian workout, dan penggantian meal. Respons JSON divalidasi sebelum disimpan.
+- Short onboarding for up to two goals, activity, experience, available time, location, equipment, diet, cuisine, priorities, and foods to avoid.
+- A seven-day local plan that works without an account. After installation, core planning remains available without an internet connection.
+- Four primary destinations: **Today, Workout, Meals, and Profile**.
+- Pending, completed, skipped, and rescheduled activity states. A task time can be changed within the selected day.
+- Set-by-set workout sessions that can be paused and resumed after restarting the application. Duration is an estimate, not a stopwatch or required target.
+- Targeted workout replacement by reason and single-meal replacement without changing the rest of the day.
+- Simple ingredients and cooking instructions without calorie counting.
+- Per-task reminders using Android notification permission and WorkManager. Delivery time is approximate. Past times do not create new reminders.
+- Weekly progress, completion percentage, streak, and local history. Completing one activity keeps a daily streak; skipped activities do not add progress.
+- Optional Firebase AI Logic support for seven-day plans, workout replacement, and meal replacement. Structured JSON responses are validated before storage.
 
-## Mode lokal dan AI
+## Local mode and AI mode
 
-Aplikasi langsung berjalan dalam **mode lokal**, tanpa `google-services.json`. Ini generator berbasis katalog dan aturan, bukan hasil AI. UI menampilkan sumber rencana dengan jelas.
+The application starts in **local mode**. It uses a catalog and deterministic planning rules, and the interface clearly identifies the plan source.
 
-Untuk menghubungkan AI milik Anda, ikuti [panduan Firebase](docs/FIREBASE.md). Tidak ada kredensial atau proyek cloud yang dibuat oleh implementasi ini. Setelah tersambung, pengguna mengaktifkan AI lewat Profile dengan penjelasan data yang dikirim. Tidak ada pemanggilan AI diam-diam setiap membuka aplikasi. Error, timeout, atau output tidak valid mempertahankan rencana yang ada.
+To connect cloud AI, follow the [Firebase setup guide](docs/FIREBASE.md). The user explicitly enables AI from Profile after reviewing what data is sent. The application never calls AI silently on launch. Errors, timeouts, and invalid output leave the saved plan unchanged.
 
-## Data dan perilaku
+## Data behavior
 
-Data disimpan di Room pada perangkat. Tidak ada login, sinkronisasi, atau analytics. Cloud AI hanya menerima preferensi perencanaan dan konten yang ingin diganti, tanpa nama atau riwayat penyelesaian. Menonaktifkan AI menghentikan permintaan berikutnya; data yang sudah dikirim tunduk pada layanan Firebase/Google yang dikonfigurasi pemilik proyek.
+Room stores application data on the device. There is no login, cloud synchronization, advertising, or analytics. Cloud AI receives only planning preferences and the item being replaced; the user's name and completion history are excluded.
 
-Pembaruan profil menyegarkan aktivitas belum selesai; aktivitas selesai, jadwal yang sudah diubah, dan riwayat tetap ada. Hari yang belum tersedia dibuat lokal ketika aplikasi dibuka. Jika katalog tidak mencakup preferensi AI yang tersimpan, aplikasi mengulang konten tervalidasi dari rencana terakhir dan menandainya **Saved plan repeat**. Generasi AI mingguan baru dijalankan lewat tombol pengguna.
+Updating the profile refreshes unfinished activities while preserving completed activities, edited schedules, and history. Missing future days are generated locally when the application opens. If the local catalog cannot satisfy a previously saved AI preference, the application repeats validated content from the latest plan and labels it **Saved plan repeat**. A new AI week is generated only after a user action.
 
-## Batas MVP
+## MVP limitations
 
-- UI menggunakan bahasa Inggris sesuai contoh konsep; dokumentasi proyek berbahasa Indonesia.
-- Katalog lokal terbatas. Tidak semua alat yang dipilih dipakai dalam setiap workout; pilihan alat membatasi apa yang boleh digunakan. Personalisasi lebih luas tersedia melalui integrasi AI.
-- Reschedule mengubah waktu pada tanggal yang dipilih, bukan memindahkan aktivitas lintas tanggal.
-- Makanan yang dihindari merupakan preferensi, bukan penyaring alergi medis. Resep tidak menyediakan gram, porsi, atau hitungan nutrisi.
-- Bukan layanan medis, diagnosis, atau terapi. Tidak ada wearable, video workout, cloud sync, atau akun pada iterasi ini.
-- APK yang disediakan adalah build debug untuk pengujian, belum ditandatangani untuk distribusi produksi.
+- The local meal and workout catalogs are intentionally limited.
+- Rescheduling changes the time on the selected date; it does not move a task to another date.
+- Foods to avoid are preferences, not medical allergy screening. Recipes do not provide exact weights, portions, or nutritional calculations.
+- Wellio is not a medical service and does not diagnose or treat health conditions.
+- Wearable integration, workout video, cloud sync, and user accounts are outside this iteration.
+- The generated APK is a debug build for testing and is not signed for production distribution.
 
-## Riwayat pengembangan
+## Development history
 
-Setiap tahap logis memiliki commit terpisah. Gunakan `git log --oneline --reverse` untuk menelusuri fondasi → model → onboarding → Today → workout → meals → reminder → AI → validasi/perbaikan. Tidak ada squash, amend, remote, atau push.
+Each logical implementation stage has its own commit. Run `git log --oneline --reverse` to review the progression from foundation through models, onboarding, Today, workouts, meals, reminders, AI integration, testing, and package migration. No remote or push was created.
 
-Identitas Git lokal: `Wellio Project <wellio@localhost>`, karena identitas pengguna belum tersedia saat proyek dibuat. Ubah melalui pengaturan Git lokal untuk commit berikutnya bila diperlukan.
+The local Git identity is `Wellio Project <wellio@localhost>` because no user Git identity was available when the repository was created. Change the local Git configuration before future commits if needed.
 
-- [Konsep asli](docs/CONCEPT.md)
-- [Keputusan arsitektur](docs/ARCHITECTURE.md)
-- [Konfigurasi Firebase](docs/FIREBASE.md)
-- [Catatan verifikasi](docs/VALIDATION.md)
+- [Product concept](docs/CONCEPT.md)
+- [Architecture decisions](docs/ARCHITECTURE.md)
+- [Firebase setup](docs/FIREBASE.md)
+- [Validation record](docs/VALIDATION.md)
 
-File konsep yang diterima berakhir pada awal bagian 28 (`UserProfile`); atribut profil dilengkapi dari persyaratan onboarding di bagian sebelumnya.
+The supplied concept ended at the beginning of section 28 (`UserProfile`). Profile attributes were completed from the onboarding requirements in the preceding sections.

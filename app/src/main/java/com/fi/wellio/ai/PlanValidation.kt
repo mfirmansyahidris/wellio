@@ -25,9 +25,9 @@ object PlanValidation {
         require((m.ingredients + m.instructions + m.tags).all { it.isNotBlank() && it.length <= 1000 })
         require(allowedMeal(m,p)) { "Generated meal did not match your food preferences." }
         val ingredients = m.ingredients.joinToString(" ").lowercase()
-        val meat = listOf("chicken", "beef", "pork", "fish", "shrimp", "salmon", "tuna", "ayam", "daging", "ikan", "udang")
+        val meat = listOf("chicken", "beef", "pork", "fish", "shrimp", "salmon", "tuna")
         if(p.diet in listOf("Vegan","Vegetarian")) require(meat.none { it in ingredients })
-        if(p.diet == "Vegan") require(listOf("egg", "milk", "cheese", "yogurt", "honey", "butter", "telur", "susu").none { it in ingredients })
+        if(p.diet == "Vegan") require(listOf("egg", "milk", "cheese", "yogurt", "honey", "butter").none { it in ingredients })
     }
     fun week(draft: WeekDraft, p: UserProfile, start: LocalDate): List<DayPlan> {
         require(draft.days.size == 7) { "AI response must contain exactly seven days." }

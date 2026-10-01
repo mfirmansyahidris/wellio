@@ -70,10 +70,10 @@ fun allowedMeal(m: Meal, p: UserProfile): Boolean {
     return p.avoid.none { avoid ->
         val word = avoid.trim().lowercase()
         val aliases = when (word) {
-            "seafood", "makanan laut" -> listOf("fish", "shrimp", "tuna", "salmon", "prawn", "ikan", "udang", "seafood")
-            "milk", "susu", "dairy" -> listOf("milk", "yogurt", "cheese", "butter", "cream", "susu")
-            "peanuts", "kacang tanah" -> listOf("peanut", "kacang tanah")
-            "spicy food", "pedas" -> listOf("chili", "chilli", "sambal", "spicy")
+            "seafood" -> listOf("fish", "shrimp", "tuna", "salmon", "prawn", "seafood")
+            "milk", "dairy" -> listOf("milk", "yogurt", "cheese", "butter", "cream")
+            "peanuts" -> listOf("peanut")
+            "spicy food" -> listOf("chili", "chilli", "hot sauce", "spicy")
             else -> listOf(word)
         }
         word.isNotBlank() && aliases.any { it in haystack }

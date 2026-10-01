@@ -1,186 +1,115 @@
-# AI Wellness Planner
+# Wellio Product Concept
 
-## 1. Product Overview
+## Product overview
 
-**Working name:** Wellio  
-**Category:** Health & Wellness / Lifestyle  
-**Platform awal:** Android  
-**Core idea:** Personal wellness assistant yang membantu user menjalani gaya hidup lebih sehat melalui rekomendasi workout, meal ideas, daily routine, reminder, dan progress tracking sederhana.
+Wellio is an Android health and lifestyle application that helps people build a healthier routine through personalized workouts, meal ideas, daily habits, reminders, and simple progress tracking.
 
-Aplikasi bukan aplikasi medis dan tidak ditujukan untuk diagnosis, pengobatan, atau penggantian konsultasi tenaga kesehatan.
+Tagline: **Your daily wellness plan, powered by AI.**
 
-### Tagline
+The application is intended for everyday wellness. It is not a medical product and must not diagnose, treat, or replace professional healthcare advice.
 
-**Your daily wellness plan, powered by AI.**
+## Product promise
 
-### Core Promise
+The user should not need to design a routine from scratch. They provide:
 
-User tidak perlu menyusun rutinitas sendiri.
+- wellness goals;
+- current activity level;
+- workout experience;
+- available workout time and location;
+- available equipment;
+- dietary and cuisine preferences;
+- food priorities and foods to avoid.
 
-Cukup tentukan:
-- tujuan;
-- kondisi aktivitas sehari-hari;
-- preferensi workout;
-- preferensi makanan;
-- waktu yang tersedia.
+Wellio turns those preferences into a simple, realistic daily plan.
 
-Aplikasi akan membentuk daily wellness plan yang sederhana dan realistis.
+## Target users
 
----
+- Beginners who do not know where to start.
+- Busy people with approximately 10–30 minutes available each day.
+- People who want easier meal decisions.
+- General wellness users who do not need advanced athletic programming or complex tracking.
 
-# 2. Problem yang Diselesaikan
+## Product principles
 
-Banyak orang ingin:
-- mulai olahraga;
-- makan lebih baik;
-- memiliki rutinitas teratur;
+- **Simple:** collect only information needed for useful recommendations.
+- **Personalized:** account for goals, time, activity, experience, equipment, and food preferences.
+- **Actionable:** provide clear activities for today instead of long articles.
+- **Flexible:** allow replacement, skipping, rescheduling, and continuation.
+- **Low friction:** no required account, cloud sync, calorie counting, or wearable for the MVP.
 
-tetapi tidak tahu harus mulai dari mana.
-
-Aplikasi fitness tradisional sering:
-- terlalu kompleks;
-- terlalu fokus pada kalori;
-- membutuhkan banyak input;
-- menyediakan program yang terasa generik;
-- mengharuskan user mengatur semuanya sendiri.
-
-Wellio mengambil pendekatan:
-
-> “Tell us about yourself. We'll prepare your day.”
-
----
-
-# 3. Target User
-
-### Primary User
-
-Pengguna umum yang:
-- ingin lebih aktif;
-- ingin mulai olahraga;
-- ingin makan lebih teratur;
-- tidak membutuhkan program atlet profesional;
-- tidak ingin melakukan tracking kompleks;
-- menginginkan rekomendasi sederhana.
-
-### Contoh Persona
-
-**Beginner**
-
-> “Saya ingin mulai olahraga, tetapi tidak tahu harus melakukan latihan apa.”
-
-**Busy Worker**
-
-> “Saya hanya punya waktu sekitar 20 menit setiap hari.”
-
-**Healthy Lifestyle User**
-
-> “Saya ingin makan lebih baik tetapi bingung menentukan menu.”
-
----
-
-# 4. Product Principles
-
-Aplikasi mengikuti beberapa prinsip utama.
-
-### Simple
-
-User tidak harus mengisi puluhan parameter.
-
-### Personalized
-
-Plan menyesuaikan:
-- goal;
-- waktu;
-- tingkat aktivitas;
-- equipment;
-- makanan yang disukai;
-- makanan yang dihindari.
-
-### Actionable
-
-AI tidak memberikan artikel panjang.
-
-AI memberikan:
-
-> Do this today.
-
-### Flexible
-
-User bisa:
-- mengganti meal;
-- mengganti workout;
-- skip;
-- reschedule.
-
-### Low Friction
-
-Untuk MVP:
-- tidak wajib login;
-- tidak wajib cloud sync;
-- tidak wajib input kalori;
-- tidak wajib wearable.
-
----
-
-# 5. Main Features
-
-Aplikasi memiliki empat area utama.
-
-## Today
-
-Dashboard utama user.
-
-Menampilkan:
-- progress hari ini;
-- workout berikutnya;
-- meals;
-- routine;
-- reminder;
-- completion status.
-
-## Workout
-
-Menampilkan workout berdasarkan profil user.
-
-## Meals
-
-Memberikan meal ideas berdasarkan preferensi.
-
-## Profile
-
-Mengatur goal dan personal preferences.
-
-Bottom navigation:
+## Primary navigation
 
 `Today | Workout | Meals | Profile`
 
----
+### Today
 
-# 6. Onboarding
+The main dashboard shows:
 
-Onboarding bertujuan mendapatkan informasi yang benar-benar dibutuhkan untuk personalisasi.
+- today's completion percentage;
+- the next workout;
+- breakfast, lunch, snack, and dinner;
+- lightweight habits;
+- reminder state;
+- task completion status.
 
-Tidak perlu terlalu panjang.
+Each task supports `Pending`, `Completed`, `Skipped`, and `Rescheduled` states.
 
-## Screen 1 — Welcome
+### Workout
 
-Headline:
+Workouts use the user's goal, experience, equipment, duration, and location. A workout contains:
 
-**Build a healthier routine that fits your life.**
+- title and description;
+- difficulty and estimated duration;
+- location and required equipment;
+- exercises with sets, repetitions or duration, rest, and instructions.
 
-CTA:
+The session view advances set by set and supports pausing and resuming. Completing all sets allows the user to finish the workout and updates Today automatically.
 
-`Get Started`
+The user may replace a workout for one of these reasons:
 
----
+- too difficult;
+- too easy;
+- required equipment is unavailable;
+- disliked exercises;
+- a shorter workout is needed.
 
-## Screen 2 — Wellness Goal
+### Meals
 
-Pertanyaan:
+The daily meal plan contains breakfast, lunch, snack, and dinner. Each meal provides:
 
-**What do you want to improve?**
+- preparation estimate;
+- ingredients;
+- short preparation steps;
+- dietary and practical tags.
 
-Pilihan:
+The user may replace only one meal while keeping the remainder of the plan. Replacement reasons include dislike, unavailable ingredients, lower cost, faster preparation, or a surprise alternative.
+
+The MVP does not count calories. Foods to avoid are treated as preferences rather than medical allergy guarantees.
+
+### Profile and progress
+
+The profile stores onboarding preferences and displays:
+
+- workouts completed this week;
+- routine completion percentage;
+- current streak;
+- current wellness goals and planning preferences.
+
+Progress exists to reinforce consistency rather than competition. A day contributes to a streak when at least one activity is completed.
+
+## Onboarding
+
+1. Welcome and product promise.
+2. Select up to two wellness goals.
+3. Select current activity level.
+4. Select beginner or intermediate workout experience.
+5. Select 10, 20, 30, 45, or 60 minutes.
+6. Select home, gym, or outdoor workout location.
+7. Select available equipment.
+8. Select dietary preference, cuisine, food priorities, and foods to avoid.
+9. Review preferences and create the first seven-day plan.
+
+Supported wellness goals:
 
 - Stay Active
 - Get Stronger
@@ -189,84 +118,7 @@ Pilihan:
 - Build Better Habits
 - Improve Overall Wellness
 
-Untuk MVP user memilih maksimal 2 goal.
-
----
-
-## Screen 3 — Activity Level
-
-**How active are you currently?**
-
-Pilihan:
-
-- Mostly Sitting
-- Lightly Active
-- Active
-- Very Active
-
----
-
-## Screen 4 — Workout Level
-
-**What's your workout experience?**
-
-Pilihan:
-
-- Beginner
-- Intermediate
-- Advanced
-
-Untuk MVP sebenarnya Beginner + Intermediate sudah cukup.
-
----
-
-## Screen 5 — Available Time
-
-**How much time can you spend on a workout?**
-
-Pilihan:
-
-- 10 minutes
-- 20 minutes
-- 30 minutes
-- 45 minutes
-- 60 minutes
-
----
-
-## Screen 6 — Workout Location
-
-**Where do you usually exercise?**
-
-Pilihan:
-
-- Home
-- Gym
-- Outdoor
-
----
-
-## Screen 7 — Available Equipment
-
-Pilihan contoh:
-
-- No equipment
-- Dumbbells
-- Resistance bands
-- Bench
-- Barbell
-- Treadmill
-- Exercise bike
-
-User bisa memilih beberapa.
-
----
-
-# 7. Food Preferences
-
-## Dietary Preference
-
-Pilihan:
+Supported dietary preferences:
 
 - Regular
 - Vegetarian
@@ -274,583 +126,114 @@ Pilihan:
 - High Protein
 - Low Carb
 
-Jangan menggunakan kategori yang mengarah ke terapi kondisi medis pada MVP.
+The MVP avoids categories that imply treatment for a medical condition.
 
----
+## Routines and reminders
 
-## Preferred Cuisine
+Routine tasks may include:
 
-Contoh:
+- water after waking;
+- breakfast;
+- a short walk;
+- a workout;
+- dinner;
+- winding down before sleep.
 
-- Indonesian
-- Asian
-- Western
-- Japanese
-- Korean
-- Anything
+WorkManager schedules approximate background reminders. Exact alarms are not an MVP requirement. The application rechecks task state before showing a notification and does not notify for completed or skipped tasks.
 
----
+## AI responsibilities
 
-## Food Priorities
+Cloud AI is reserved for areas that benefit from personalization:
 
-User dapat memilih:
+1. Seven-day wellness plan generation.
+2. Workout generation and replacement.
+3. Meal recommendation and replacement.
 
-- Simple cooking
-- Budget friendly
-- High protein
-- Quick preparation
-- Balanced
-- Lots of vegetables
+Local logic handles completion state, streaks, reminders, notifications, schedules, timers, progress, and storage.
 
----
-
-## Foods to Avoid
-
-Input berupa selectable chips atau free text.
-
-Contoh:
-
-`Seafood`
-
-`Spicy Food`
-
-`Milk`
-
-`Peanuts`
-
-Untuk MVP, ini diperlakukan sebagai **preference**, bukan diagnosis alergi medis.
-
----
-
-# 8. Generate First Plan
-
-Setelah onboarding:
-
-**Creating your wellness plan...**
-
-AI membuat plan selama beberapa hari sekaligus.
-
-Rekomendasi awal:
-
-**Generate 7-day plan.**
-
-Alasan:
-- lebih hemat request AI;
-- user mendapatkan pengalaman konsisten;
-- aplikasi tetap berfungsi tanpa memanggil AI setiap dibuka.
-
----
-
-# 9. Today Screen
-
-Today merupakan homepage utama.
-
-Contoh struktur:
+## AI architecture
 
 ```text
-Good Morning 👋
-
-Today's Progress
-████████████░░░  70%
-5 of 7 activities completed
-
-NEXT
-┌─────────────────────────────┐
-│ 🏋️ Full Body Workout        │
-│ 20 min • Beginner           │
-│                        →    │
-└─────────────────────────────┘
-
-MEALS
-
-Breakfast
-🥣 Banana Oatmeal
-07:30
-
-Lunch
-🍛 Chicken Rice Bowl
-12:30
-
-Dinner
-🥗 Tofu Vegetable Bowl
-19:00
-
-ROUTINE
-
-✓ Morning Water
-✓ Breakfast
-○ Workout
-○ Dinner
-○ Wind Down
-```
-
----
-
-# 10. Daily Task Status
-
-Setiap task mempunyai status:
-
-- Pending
-- Completed
-- Skipped
-- Rescheduled
-
-User dapat melakukan:
-
-`Done`
-
-`Skip`
-
-`Reschedule`
-
----
-
-# 11. Workout Feature
-
-Workout dibuat berdasarkan:
-
-- user goal;
-- experience;
-- available equipment;
-- duration;
-- workout location.
-
----
-
-# 12. Workout Card
-
-Contoh:
-
-```text
-Full Body Beginner
-
-20 MIN
-6 Exercises
-
-Squat
-3 × 12
-
-Push Up
-3 × 8
-
-Glute Bridge
-3 × 12
-
-Bird Dog
-3 × 10
-
-Plank
-3 × 20 sec
-
-Stretching
-3 min
-```
-
-CTA:
-
-`Start Workout`
-
----
-
-# 13. Workout Session
-
-Mode workout dapat dibuat sederhana.
-
-```text
-Squat
-
-Set 2 of 3
-
-12 REPS
-
-[ Previous ]
-
-[ Complete Set ]
-
-[ Next ]
-```
-
-Tidak perlu video pada MVP.
-
-Bisa menggunakan:
-- illustration;
-- static image;
-- text instruction.
-
----
-
-# 14. Workout Completion
-
-Setelah selesai:
-
-**Workout Complete 🎉**
-
-```text
-20 min
-6 exercises
-18 total sets
-```
-
-CTA:
-
-`Finish`
-
-Kemudian progress Today otomatis diperbarui.
-
----
-
-# 15. Regenerate Workout
-
-Jika user tidak cocok dengan workout:
-
-`Replace Workout`
-
-AI diberi konteks:
-
-- profil user;
-- workout yang sedang diganti;
-- alasan jika tersedia.
-
-Pilihan reason:
-
-- Too difficult
-- Too easy
-- Don't have the equipment
-- Don't like these exercises
-- Need something shorter
-
-AI kemudian membuat workout alternatif.
-
----
-
-# 16. Meals
-
-Meals screen menampilkan plan.
-
-```text
-TODAY
-
-Breakfast
-Banana Oatmeal
-~10 min preparation
-
-Lunch
-Chicken Rice Bowl
-~20 min preparation
-
-Snack
-Greek Yogurt & Fruit
-
-Dinner
-Vegetable Tofu Stir Fry
-~20 min preparation
-```
-
-Tidak perlu calorie counting pada MVP.
-
----
-
-# 17. Meal Detail
-
-Detail meal:
-
-**Chicken Rice Bowl**
-
-Estimated preparation:
-
-`20 minutes`
-
-Ingredients:
-
-- rice;
-- chicken;
-- carrot;
-- broccoli;
-- garlic.
-
-Simple instructions:
-
-1. Cook the rice.
-2. Season and cook chicken.
-3. Stir-fry vegetables.
-4. Combine and serve.
-
-CTA:
-
-`Replace Meal`
-
----
-
-# 18. Replace Meal
-
-Ini adalah salah satu AI interaction utama.
-
-AI tidak regenerate seluruh plan.
-
-Hanya satu meal.
-
-Contoh:
-
-```text
-Replace Dinner
-
-Why?
-
-○ Don't like it
-○ Ingredients unavailable
-○ Something cheaper
-○ Something quicker
-○ Surprise me
-```
-
-Generate:
-
-> Alternative meal.
-
-Plan kemudian diperbarui.
-
----
-
-# 19. Daily Routine
-
-Routine bukan hanya workout dan meal.
-
-User juga bisa mempunyai lightweight habit.
-
-Contoh default:
-
-- Drink water after waking up
-- Breakfast
-- Short walk
-- Workout
-- Dinner
-- Wind down before sleep
-
-Routine dibuat seminimal mungkin.
-
----
-
-# 20. Reminder
-
-User bisa mengaktifkan notification pada task.
-
-Contoh:
-
-**Workout Reminder**
-
-`17:30`
-
-**Breakfast**
-
-`07:30`
-
-**Wind Down**
-
-`22:30`
-
-Untuk reminder rutin yang toleran terhadap sedikit fleksibilitas, Android WorkManager cocok untuk pekerjaan background yang tidak membutuhkan alarm pada detik tertentu. Jika suatu hari aplikasi membutuhkan alarm yang benar-benar presisi, Android memiliki pembatasan tambahan untuk exact alarms sehingga sebaiknya tidak menjadi requirement MVP.
-
----
-
-# 21. Progress
-
-Tidak perlu fitness analytics kompleks.
-
-MVP cukup menampilkan:
-
-### This Week
-
-```text
-Workout
-
-M ✓
-T ✓
-W -
-T ✓
-F ○
-S ○
-S ○
-
-3 workouts completed
-```
-
-### Routine Completion
-
-`82%`
-
-### Current Streak
-
-`🔥 4 days`
-
-Tujuan progress bukan kompetisi.
-
-Tujuannya:
-
-> memberikan feedback bahwa user konsisten.
-
----
-
-# 22. AI Responsibilities
-
-AI hanya menangani area yang memang membutuhkan personalisasi.
-
-### AI digunakan untuk:
-
-1. Weekly wellness plan generation
-2. Workout generation
-3. Workout replacement
-4. Meal recommendation
-5. Meal replacement
-
----
-
-# 23. Hal yang Tidak Menggunakan AI
-
-Tidak semua fitur perlu Gemini.
-
-Local logic menangani:
-
-- task completion;
-- streak;
-- reminder;
-- notification;
-- timer;
-- progress;
-- schedule;
-- local storage.
-
-Dengan demikian request AI tetap sedikit.
-
----
-
-# 24. AI Architecture
-
-Recommended flow:
-
-```text
-Android App
-
-     │
-
+Android application
+        |
 Firebase AI Logic
-
-     │
-
+        |
 Gemini
-
-     │
-
-Structured Response
-
-     │
-
-App Data Model
-
-     │
-
-Room Database
-
-     │
-
-UI
+        |
+Structured JSON response
+        |
+Validation and domain models
+        |
+Room database
+        |
+Compose interface
 ```
 
-Firebase AI Logic memang dirancang agar mobile/web client dapat memanggil Gemini melalui Firebase proxy, sehingga API key Gemini tidak perlu ditanam langsung di aplikasi. Firebase juga merekomendasikan App Check untuk melindungi endpoint AI dari unauthorized clients.
+Firebase AI Logic avoids embedding a direct Gemini API key in the application. App Check protects the client integration from unauthorized use.
 
----
+AI output must use a response schema rather than free-form Markdown. Generated content is validated before storage. Invalid, empty, timed-out, or failed responses leave the existing plan unchanged.
 
-# 25. Structured AI Output
+## Core data models
 
-AI sebaiknya tidak mengembalikan Markdown bebas.
+### UserProfile
 
-Gunakan structured output.
+- name;
+- up to two goals;
+- activity level;
+- workout experience;
+- available minutes;
+- location;
+- equipment;
+- diet and cuisine;
+- food priorities;
+- foods to avoid;
+- explicit AI opt-in.
 
-Firebase AI Logic mendukung response schema sehingga hasil Gemini dapat dipaksa mengikuti struktur JSON yang sudah ditentukan.
+### Workout
 
-Contoh:
+- identifier or title;
+- description;
+- difficulty;
+- duration;
+- location;
+- equipment;
+- exercises.
 
-```json
-{
-  "day": "Monday",
-  "workout": {
-    "name": "Beginner Full Body",
-    "durationMinutes": 20,
-    "exercises": []
-  },
-  "meals": {
-    "breakfast": {},
-    "lunch": {},
-    "dinner": {},
-    "snack": {}
-  }
-}
-```
+### Exercise
 
-Keuntungan:
+- name;
+- sets;
+- repetitions or seconds;
+- rest duration;
+- instruction.
 
-- parsing lebih mudah;
-- UI konsisten;
-- model lebih sulit menghasilkan struktur aneh;
-- lebih mudah melakukan validation.
+### Meal
 
----
+- meal type;
+- name;
+- preparation duration;
+- ingredients;
+- instructions;
+- tags;
+- cuisine and budget indication.
 
-# 26. Workout Data Model
+### Daily task
 
-```text
-Workout
+- stable identifier;
+- task type;
+- title;
+- local date and time;
+- completion state;
+- reminder preference.
 
-id
-title
-description
-difficulty
-durationMinutes
-location
-equipment[]
-exercises[]
-```
+## MVP exclusions
 
-Exercise:
-
-```text
-Exercise
-
-id
-name
-sets
-reps
-durationSeconds
-restSeconds
-instruction
-```
-
----
-
-# 27. Meal Data Model
-
-```text
-Meal
-
-id
-type
-name
-description
-preparationMinutes
-ingredients[]
-instructions[]
-tags[]
-```
-
-Meal type:
-
-- BREAKFAST
-- LUNCH
-- DINNER
-- SNACK
-
----
-
-# 28. User Profile Model
-
-```text
-UserProfile
+- mandatory login;
+- cloud synchronization;
+- wearable integration;
+- workout video;
+- exact alarms;
+- advanced fitness analytics;
+- medical diagnosis or treatment;
+- calorie targets;
+- automatic background AI generation.

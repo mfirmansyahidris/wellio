@@ -1,30 +1,30 @@
-# Mengaktifkan Firebase AI Logic
+# Enable Firebase AI Logic
 
-Integrasi sudah ada dalam sumber dan ikut dikompilasi. Tanpa konfigurasi Firebase, aplikasi tetap bisa digunakan dalam mode lokal.
+The Firebase integration is implemented and compiled into the application. The local planner remains available when Firebase is not configured.
 
-1. Buat/pilih Firebase project milik Anda. Daftarkan aplikasi Android dengan package `com.fi.wellio`.
-2. Aktifkan Firebase AI Logic menggunakan Gemini Developer API sesuai konsol Firebase.
-3. Unduh `google-services.json` ke `app/google-services.json`. File ini diabaikan Git. Jangan menaruh Gemini API key dalam kode atau aset aplikasi.
-4. Daftarkan App Check. Build debug menggunakan `DebugAppCheckProviderFactory`; daftarkan token debug dari perangkat uji di konsol, lalu jangan membagikan token tersebut. Build release menggunakan Play Integrity. Aktifkan enforcement Firebase AI Logic setelah konfigurasi App Check tervalidasi.
-5. Pilih model yang tersedia di project Anda. Default kode adalah `gemini-3.8-flash`, sesuai daftar dukungan dokumentasi yang diperiksa saat pembuatan. Nama model bisa diubah melalui properti Gradle `wellioAiModel`, misalnya `./gradlew -PwellioAiModel=MODEL_YANG_DIAKTIFKAN assembleDebug`.
-6. Jalankan ulang aplikasi. Buka **Profile → Use cloud AI**, baca penjelasan data, aktifkan, lalu pilih **Generate 7 days with AI**.
-7. Uji generasi, penggantian meal/workout, penolakan output, offline, App Check, kuota, dan biaya di Firebase project Anda sebelum distribusi produksi.
+1. Create or select a Firebase project and register an Android application with package name `com.fi.wellio`.
+2. Enable Firebase AI Logic with the Gemini Developer API in Firebase Console.
+3. Download `google-services.json` to `app/google-services.json`. This file is ignored by Git. Never place a Gemini API key directly in source code or application assets.
+4. Register App Check. Debug builds use `DebugAppCheckProviderFactory`; register the debug token shown by the test device and never share it. Release builds use Play Integrity. Enable Firebase AI Logic enforcement after App Check has been verified.
+5. Choose a model available to the Firebase project. The default is `gemini-3.8-flash`. Override it with the `wellioAiModel` Gradle property when necessary, for example: `./gradlew -PwellioAiModel=YOUR_ENABLED_MODEL assembleDebug`.
+6. Restart the application. Open **Profile → Use cloud AI**, review the data notice, enable AI, then select **Generate 7 days with AI**.
+7. Test plan generation, meal and workout replacement, output rejection, offline behavior, App Check, quota, and cost before production distribution.
 
-## Perilaku integrasi
+## Integration behavior
 
-- `FirebasePlanner` mengirim satu permintaan untuk tujuh hari atau satu item pengganti.
-- `Schemas` menentukan JSON schema. `PlanValidation` memeriksa jumlah/tanggal, durasi, peralatan, struktur latihan, bahan yang dihindari, dan tag pola makan.
-- Nama pengguna dan riwayat aktivitas tidak dikirim. Preferensi dikodekan sebagai JSON; nilai bebas diperlakukan sebagai data.
-- Timeout 90 detik. Tidak ada retry otomatis yang berpotensi menggandakan biaya.
-- Respons yang gagal tidak mengganti data tersimpan. Perubahan status aktivitas di perangkat tetap merupakan operasi lokal.
-- Pengguna dapat menonaktifkan AI dan melanjutkan rencana yang tersimpan.
+- `FirebasePlanner` sends one request for a seven-day plan or one replacement item.
+- `Schemas` defines the JSON response schema. `PlanValidation` verifies day count and dates, duration, equipment, exercise structure, avoided ingredients, and dietary tags.
+- The user's name and completion history are not sent. Preferences are encoded as JSON, and free-text values are treated as data.
+- Requests have a 90-second timeout. There is no automatic retry that could duplicate usage or cost.
+- A failed response never replaces the saved plan. Task status changes remain local operations.
+- The user can disable AI and continue using the saved plan.
 
-## Sumber resmi yang digunakan
+## Official references
 
 - [Firebase AI Logic overview](https://firebase.google.com/docs/ai-logic)
-- [Structured output untuk Android](https://firebase.google.com/docs/ai-logic/generate-structured-output?platform=android)
+- [Structured output for Android](https://firebase.google.com/docs/ai-logic/generate-structured-output?platform=android)
 - [App Check debug provider](https://firebase.google.com/docs/app-check/android/debug-provider)
-- [App Check untuk AI Logic](https://firebase.google.com/docs/ai-logic/app-check)
-- [Daftar model](https://firebase.google.com/docs/ai-logic/models)
+- [App Check for AI Logic](https://firebase.google.com/docs/ai-logic/app-check)
+- [Supported models](https://firebase.google.com/docs/ai-logic/models)
 
-Belum ada uji permintaan Gemini langsung karena file konfigurasi dan Firebase project pengguna tidak tersedia. Keberhasilan build tidak sama dengan keberhasilan konfigurasi cloud.
+The current `google-services.json` is registered for `com.fi.wellio`. A successful build confirms client configuration parsing but does not prove that Gemini requests, quotas, billing, or App Check enforcement work in the Firebase project. Those items require a live cloud test.

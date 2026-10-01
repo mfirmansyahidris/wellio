@@ -1,34 +1,34 @@
-# Verifikasi implementasi
+# Implementation validation
 
-Dijalankan pada 1 Oktober 2026 di lingkungan pengembangan lokal.
+Validation was run on October 1, 2026, in the local development environment.
 
-## Hasil
+## Results
 
-| Pemeriksaan | Hasil |
+| Check | Result |
 | --- | --- |
-| `assembleDebug` | Lulus; APK debug berhasil dibangun |
-| `compileReleaseKotlin` | Lulus; termasuk provider App Check untuk release |
-| `testDebugUnitTest` | 14 pengujian lulus, 0 kegagalan |
-| `lintDebug` | Lulus tanpa error; peringatan ketersediaan versi dependensi baru tetap dicatat |
-| Instrumentation pada emulator Android 15 / API 35 ARM64 | 4 pengujian lulus, 0 kegagalan, sekitar 30 detik |
+| `assembleDebug` | Passed; debug APK generated |
+| `compileReleaseKotlin` | Passed; includes the release App Check provider |
+| `testDebugUnitTest` | 14 tests passed, 0 failures |
+| `lintDebug` | Passed with no errors; dependency update notices remain |
+| Instrumentation on Android 15 / API 35 ARM64 emulator | 4 tests passed, 0 failures |
 
-Pengujian perangkat dijalankan dengan APK aplikasi dan APK AndroidTest yang terpasang pada emulator khusus pengembangan. Perangkat lain tidak dipakai.
+The application APK and AndroidTest APK were installed on a dedicated development emulator. No commands were run against the connected physical device.
 
-## Yang diperiksa
+## Covered behavior
 
-- Tujuh tanggal unik, empat meal per hari, serta ID aktivitas yang konsisten.
-- Preferensi vegan, daftar makanan yang dihindari, penggantian item, dan penolakan saat katalog tidak menyediakan kandidat.
-- Progres, streak, skip, serialisasi untuk penyimpanan, dan pelestarian aktivitas selesai saat refresh.
-- Validasi keluaran AI: tanggal duplikat, alat yang tidak tersedia, jumlah set tidak wajar, bahan yang dihindari, serta klaim tag vegan yang tidak cocok dengan bahan.
-- Transaksi Room bersamaan tidak menghilangkan perubahan.
-- UI onboarding → Today → completion → activity recreation → meal replacement → workout sets → Profile.
-- UI jam tidak valid, reschedule, skip, dan reset ke pending.
-- WorkManager mempertahankan permintaan yang sama ketika rekonsiliasi diulang, menggantinya saat jadwal berubah, dan membatalkannya saat aktivitas selesai.
-- Pemeriksaan visual layar welcome pada emulator; alur Today juga diperiksa oleh pengujian UI.
+- Seven unique dates, four meals per day, and stable task identifiers.
+- Vegan preferences, avoided foods, item replacement, and rejection when the local catalog has no valid candidate.
+- Progress, streak, skip behavior, storage serialization, and preservation of completed activities during plan refresh.
+- AI output validation for duplicate dates, unavailable equipment, excessive sets, avoided ingredients, and dietary labels that conflict with ingredients.
+- Concurrent Room transactions preserve both changes.
+- Full UI flow from onboarding through Today, completion, activity recreation, meal replacement, workout sets, and Profile.
+- Invalid time input, rescheduling, skipping, and resetting a task to pending.
+- WorkManager retains identical pending work, replaces it when a schedule changes, and cancels it when a task is completed.
+- The package migration to `com.fi.wellio`, including manifest components, Firebase resources, unit tests, and device tests.
 
-## Batas hasil uji
+## Validation limits
 
-- Belum mengirim permintaan Gemini langsung karena Firebase project, `google-services.json`, dan token App Check pengguna tidak disediakan.
-- Pengiriman notifikasi pada perangkat fisik, pembatasan baterai vendor, reboot, serta perubahan zona waktu belum diuji end-to-end. Penjadwalan dan pembatalan WorkManager diuji di emulator.
-- Tidak ada build release bertanda tangan, publikasi Play Store, audit aksesibilitas menyeluruh, atau klaim kesiapan produksi.
-- Perbaikan terakhir pada pesan timeout cloud dan penjelasan refresh profil AI telah dikompilasi dan diperiksa lint; koneksi cloud tetap perlu diuji setelah konfigurasi.
+- A direct Gemini request has not been verified against the configured Firebase project.
+- Notification delivery on a physical device, vendor battery restrictions, reboot behavior, and timezone changes have not been tested end to end.
+- There is no signed release build, Play Store publication, comprehensive accessibility audit, or production-readiness claim.
+- Cloud connectivity, App Check enforcement, quotas, and billing still require testing in Firebase Console.
