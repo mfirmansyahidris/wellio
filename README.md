@@ -58,7 +58,7 @@ Updating the profile refreshes unfinished activities while preserving completed 
 
 ## Development history
 
-Each logical implementation stage has its own commit. Run `git log --oneline --reverse` to review the progression from foundation through models, onboarding, Today, workouts, meals, reminders, AI integration, testing, and package migration. No remote or push was created.
+Each logical implementation stage has its own commit. Run `git log --oneline --reverse` to review the progression from foundation through models, onboarding, Today, workouts, meals, reminders, AI integration, testing, and package migration. GitHub Pages publishes only the privacy policy from `docs/privacy-policy.html`.
 
 The local Git identity is `Wellio Project <wellio@localhost>` because no user Git identity was available when the repository was created. Change the local Git configuration before future commits if needed.
 
