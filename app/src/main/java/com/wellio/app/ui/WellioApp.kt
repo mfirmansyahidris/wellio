@@ -50,7 +50,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
                 if (day != null) when(tab) {
                     0 -> TodayScreen(current, day, {selectedDate=it}, {tab=1}, {tab=2}, {taskId=it.id})
                     1 -> WorkoutScreen(day, busy, {selectedDate=it}, {vm.completeSet(day.date,it)}, {vm.finishWorkout(day.date)}, {vm.replaceWorkout(day.date,it)})
-                    2 -> Column(Modifier.padding(24.dp)) { Heading("Nourish your day", "${day.meals.size} meal ideas, picked for you.") }
+                    2 -> MealsScreen(day, busy, {selectedDate=it}, {kind,reason->vm.replaceMeal(day.date,kind,reason)}, {vm.setTask(day.date,it.id,Status.COMPLETED)})
                     3 -> ProfileScreen(current, {editing=true})
                 }
                 day?.tasks?.find { it.id == taskId }?.let { task ->

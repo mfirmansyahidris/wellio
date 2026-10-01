@@ -72,4 +72,16 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
             tasks = it.tasks.map { task -> if (task.kind == TaskKind.WORKOUT) task.copy(title = alternative.title) else task }) } }
     }
 
+    fun replaceMeal(date: String, kind: TaskKind, reason: String) = action {
+        val current = store.read()
+        val profile = current.profile ?: return@action
+        val day = current.days.first { it.date == date }
+        require(day.tasks.none { it.kind == kind && it.status == Status.COMPLETED }) { "Completed meals stay in your history." }
+        val meal = day.meals.getValue(kind)
+        val alternative = planner.meal(profile, kind, meal.name.hashCode(), meal, reason)
+        require(alternative.name != meal.name) { "No other local meal matches your preferences. Your current meal is unchanged." }
+        store.update { old -> old.changeDay(date) { it.copy(meals = it.meals + (kind to alternative),
+            tasks = it.tasks.map { task -> if (task.kind == kind) task.copy(title = alternative.name) else task }) } }
+    }
+
 }
