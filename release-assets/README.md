@@ -4,7 +4,12 @@
 
 - `wellio-launcher-source.png`: original generated source artwork.
 - `wellio-play-store-icon-512.png`: 512 × 512 opaque PNG for the Google Play listing.
+- `wellio-feature-graphic.png`: 1024 × 500 PNG for the Google Play listing.
 - Android density, adaptive, and monochrome resources are stored under `app/src/main/res/`.
+
+## Play Store listing screenshots
+
+Eight Android emulator screenshots and their 1080 × 1920 presentation versions are in `store-screenshots/`. The set shows the four main app areas and representative workout and meal flows. See `store-screenshots-preview.jpg` for a contact sheet and `store-screenshots/README.md` for details.
 
 The icon uses a centered abstract sprout to represent daily growth, movement, and nourishment. Its forest green, cream, lime, and peach palette matches the application interface.
 
