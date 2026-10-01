@@ -12,9 +12,20 @@ import java.time.LocalDate
 class WellioViewModel(application: Application) : AndroidViewModel(application) {
     val store = WellioStore(WellioDatabase.get(application))
     val planner = LocalPlanner()
+    private val reminders = com.wellio.app.reminders.ReminderScheduler(application)
+    private fun observeReminders() {
+        viewModelScope.launch {
+            store.state.collect { current ->
+                try { reminders.reconcile(current) }
+                catch (e: CancellationException) { throw e }
+                catch (_: Exception) { message.value = "Reminder scheduling failed. Reopen the app to retry." }
+            }
+        }
+    }
     val state = store.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     var busy = MutableStateFlow(false); private set
     val message = MutableStateFlow<String?>(null)
+    init { observeReminders() }
     fun dismissMessage() { message.value = null }
     fun action(block: suspend () -> Unit) {
         if (busy.value) return
@@ -83,5 +94,12 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         store.update { old -> old.changeDay(date) { it.copy(meals = it.meals + (kind to alternative),
             tasks = it.tasks.map { task -> if (task.kind == kind) task.copy(title = alternative.name) else task }) } }
     }
+
+    fun setReminder(date: String, id: String, enabled: Boolean) = action {
+        store.update { current -> current.changeDay(date) { day -> day.copy(tasks = day.tasks.map {
+            if (it.id == id) it.copy(reminder = enabled) else it
+        }) } }
+    }
+    fun refreshReminders() { viewModelScope.launch { try { reminders.reconcile(store.read(), force = true) } catch (e: CancellationException) { throw e } catch (_: Exception) { message.value = "Could not refresh reminders." } } }
 
 }

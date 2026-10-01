@@ -102,7 +102,9 @@ fun kindIcon(kind: TaskKind) = when(kind) {
     }
 }
 
-@Composable fun TaskDialog(task: DailyTask, isFuture: Boolean, dismiss: ()->Unit, update: (Status, String?)->Unit) {
+@Composable fun TaskDialog(task: DailyTask, isFuture: Boolean, dismiss: ()->Unit, reminder: (Boolean)->Unit, update: (Status, String?)->Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val permission = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted -> reminder(granted) }
     var time by rememberSaveable(task.id) { mutableStateOf(task.time) }
     val valid = Regex("([01][0-9]|2[0-3]):[0-5][0-9]").matches(time)
     AlertDialog(onDismissRequest=dismiss, title={Text(task.title)}, text={
@@ -114,6 +116,18 @@ fun kindIcon(kind: TaskKind) = when(kind) {
             }
             OutlinedTextField(time, {time=it}, label={Text("Time today (HH:mm)")}, singleLine=true, isError=!valid, modifier=Modifier.fillMaxWidth())
             OutlinedButton({update(Status.RESCHEDULED, time)}, enabled=valid) { Text("Reschedule") }
+            Row(verticalAlignment=Alignment.CenterVertically) {
+                Text("Remind me", Modifier.weight(1f))
+                Switch(checked=task.reminder, onCheckedChange={ enabled ->
+                    if(enabled && android.os.Build.VERSION.SDK_INT >= 33 && androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED)
+                        permission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    else reminder(enabled)
+                })
+            }
+            Text("Reminders are approximate and may be delayed by battery settings. Past times won't trigger a notification.", style=MaterialTheme.typography.bodySmall)
+            if(!androidx.core.app.NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                TextButton({ context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)) }) { Text("Allow notifications in settings") }
+            }
             if(task.status != Status.PENDING) TextButton({update(Status.PENDING, null)}) { Text("Reset to pending") }
         }
     }, confirmButton={TextButton(dismiss){Text("Close")}})

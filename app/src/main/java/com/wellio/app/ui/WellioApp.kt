@@ -24,7 +24,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     var taskId by rememberSaveable { mutableStateOf<String?>(null) }
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.ensureDays() }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.ensureDays(); vm.refreshReminders() }
     LaunchedEffect(state?.profile != null) {
         if (state?.profile != null) {
             vm.ensureDays()
@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
                     3 -> ProfileScreen(current, {editing=true})
                 }
                 day?.tasks?.find { it.id == taskId }?.let { task ->
-                    TaskDialog(task, LocalDate.parse(day.date).isAfter(LocalDate.now()), {taskId=null}) { status, time ->
+                    TaskDialog(task, LocalDate.parse(day.date).isAfter(LocalDate.now()), {taskId=null}, {vm.setReminder(day.date, task.id, it)}) { status, time ->
                         vm.setTask(day.date, task.id, status, time); taskId=null
                     }
                 }
