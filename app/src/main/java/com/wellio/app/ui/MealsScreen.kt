@@ -25,7 +25,7 @@ import java.time.LocalDate
     val scroll=rememberScrollState()
     LaunchedEffect(detailName) { scroll.scrollTo(0) }
     Column(Modifier.fillMaxSize().verticalScroll(scroll).padding(24.dp), verticalArrangement=Arrangement.spacedBy(22.dp)) {
-        if(detail!=null && kind!=null) {
+        if(detail!=null) {
             TextButton({detailName=null}) {Text("← All meals")}
             Eyebrow(kind.name)
             Heading(detail.name, "Simple ingredients. A moment to enjoy.")

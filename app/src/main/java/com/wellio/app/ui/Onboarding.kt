@@ -82,7 +82,7 @@ import kotlinx.serialization.encodeToString
                     Text(p.goals.joinToString(" + ") { it.label }, style=MaterialTheme.typography.titleLarge)
                     Text("${p.minutes} min • ${p.level} • ${p.location}")
                     Text("${p.diet} meals • ${p.cuisine} cuisine")
-                    Text("Start with a personalized local plan. Cloud AI can be enabled later when connected.", style=MaterialTheme.typography.bodySmall)
+                    Text(if(p.aiEnabled) "Refresh your connected AI plan using these preferences. Completed activities stay in your history." else "Start with a personalized local plan. Cloud AI can be enabled later when connected.", style=MaterialTheme.typography.bodySmall)
                 }
             }
         }

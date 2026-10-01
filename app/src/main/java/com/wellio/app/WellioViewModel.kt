@@ -30,8 +30,8 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
     fun dismissMessage() { message.value = null }
     fun action(block: suspend () -> Unit) {
         if (busy.value) return
+        busy.value = true
         viewModelScope.launch {
-            busy.value = true
             try { block() } catch (e: CancellationException) { throw e }
             catch (e: Exception) { message.value = e.message ?: "Something went wrong. Please try again." }
             finally { busy.value = false }
@@ -49,7 +49,13 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         val missing = (0..6).map { LocalDate.now().plusDays(it.toLong()) }
             .filter { date -> current.days.none { it.date == date.toString() } }
         if (missing.isNotEmpty()) {
-            val days = withContext(Dispatchers.Default) { missing.map { planner.day(profile, it) } }
+            val days = withContext(Dispatchers.Default) { missing.map { date ->
+                try { planner.day(profile, date) }
+                catch (e: IllegalArgumentException) {
+                    val previous = current.days.lastOrNull() ?: throw e
+                    buildDay(date, previous.workout, previous.meals, "Saved plan repeat")
+                }
+            } }
             store.update { old -> old.copy(days = (old.days + days.filter { day -> old.days.none { it.date == day.date } }).sortedBy { it.date }) }
         }
     }
@@ -78,8 +84,9 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         val profile = current.profile ?: return@action
         val day = current.days.first { it.date == date }
         require(day.tasks.none { it.kind == TaskKind.WORKOUT && it.status == Status.COMPLETED }) { "Completed workouts stay in your history." }
-        val seed = day.workout.exercises.first().name.hashCode() + 1
-        val alternative = if (profile.aiEnabled) ai.workout(profile, day.workout, reason) else planner.workout(profile, seed, reason)
+        require(reason != "Need something shorter" || day.workout.minutes > 3) { "This routine is already very short. You can skip it or pause between sets." }
+        val seed = listOf("Sit-to-stand", "Wall push-up", "Glute bridge", "Bird dog", "Standing calf raise", "Standing march").indexOf(day.workout.exercises.first().name).let { if (it < 0) 1 else it + 1 }
+        val alternative = if (profile.aiEnabled) ai.workout(profile, day.workout, reason) else planner.workout(if (reason == "Need something shorter") profile.copy(minutes = day.workout.minutes) else profile, seed, reason)
         store.update { old -> old.changeDay(date) { it.copy(workout = alternative, session = null, source = if(profile.aiEnabled) "AI + saved plan" else "Local + saved plan",
             tasks = it.tasks.map { task -> if (task.kind == TaskKind.WORKOUT) task.copy(title = alternative.title) else task }) } }
     }

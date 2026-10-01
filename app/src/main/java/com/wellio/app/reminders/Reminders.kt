@@ -16,6 +16,8 @@ import com.wellio.app.MainActivity
 import com.wellio.app.R
 import com.wellio.app.data.*
 import com.wellio.app.domain.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.*
@@ -25,25 +27,31 @@ private const val TAG = "wellio-reminders"
 private const val CHANNEL = "wellio-daily"
 class ReminderScheduler(private val context: Context) {
     private var fingerprint: String? = null
-    suspend fun reconcile(state: WellnessState, force: Boolean = false) = withContext(Dispatchers.IO) {
-        val signature = state.days.flatMap { day -> day.tasks.map { "${day.date}|${it.id}|${it.time}|${it.status}|${it.reminder}|${it.title}" } }.joinToString() + ZoneId.systemDefault().id
+    private val lock = Mutex()
+    suspend fun reconcile(state: WellnessState, force: Boolean = false) = lock.withLock { withContext(Dispatchers.IO) {
+        val signature = state.days.flatMap { day -> day.tasks.map { "${day.date}|${it.id}|${it.time}|${it.status}|${it.reminder}" } }.joinToString() + ZoneId.systemDefault().id
         if (!force && signature == fingerprint) return@withContext
         val manager = WorkManager.getInstance(context)
-        manager.cancelAllWorkByTag(TAG).result.get()
+        val pending = manager.getWorkInfosByTag(TAG).get().filter { !it.state.isFinished }
         val now = ZonedDateTime.now()
         for (day in state.days) for (task in day.tasks) {
-            if (!task.reminder || task.status in listOf(Status.COMPLETED, Status.SKIPPED)) continue
+            val active = pending.filter { "task:${task.id}" in it.tags }
+            val enabled = task.reminder && task.status !in listOf(Status.COMPLETED, Status.SKIPPED)
             val due = LocalDate.parse(day.date).atTime(LocalTime.parse(task.time)).atZone(now.zone)
+            val dueTag = "due:${due.toInstant()}"
+            // Keep an already-due job intact: WorkManager may be waiting for the OS to run it.
+            if (enabled && active.any { dueTag in it.tags }) continue
+            if (active.isNotEmpty()) manager.cancelUniqueWork(task.id).result.get()
             val delay = Duration.between(now, due).toMillis()
-            if (delay <= 0) continue
+            if (!enabled || delay <= 0) continue
             val request = OneTimeWorkRequestBuilder<ReminderWorker>()
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .setInputData(workDataOf("date" to day.date, "taskId" to task.id))
-                .addTag(TAG).build()
+                .addTag(TAG).addTag("task:${task.id}").addTag(dueTag).build()
             manager.enqueueUniqueWork(task.id, ExistingWorkPolicy.REPLACE, request).result.get()
         }
         fingerprint = signature
-    }
+    } }
 }
 class ReminderWorker(context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {

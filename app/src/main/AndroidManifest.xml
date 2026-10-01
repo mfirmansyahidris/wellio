@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <application android:name=".WellioApplication" android:allowBackup="false" android:label="Wellio" android:icon="@drawable/ic_wellio" android:theme="@style/Theme.Wellio" android:supportsRtl="true">
+    <application android:name=".WellioApplication" android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:label="Wellio" android:icon="@drawable/ic_wellio" android:theme="@style/Theme.Wellio" android:supportsRtl="true">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

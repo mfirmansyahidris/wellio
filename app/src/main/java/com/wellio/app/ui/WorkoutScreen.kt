@@ -84,7 +84,7 @@ import java.time.LocalDate
 }
 
 @Composable fun ReasonDialog(title: String, subtitle: String, reasons: List<String>, dismiss: ()->Unit, choose: (String)->Unit) {
-    AlertDialog(onDismissRequest=dismiss, title={Text(title)}, text={Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
+    AlertDialog(onDismissRequest=dismiss, title={Text(title)}, text={Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement=Arrangement.spacedBy(8.dp)) {
         Text(subtitle)
         reasons.forEach { reason -> OutlinedButton({choose(reason)}, modifier=Modifier.fillMaxWidth()) {Text(reason)} }
     }}, confirmButton={TextButton(dismiss){Text("Cancel")}})

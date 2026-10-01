@@ -23,14 +23,16 @@ import androidx.lifecycle.compose.LifecycleEventEffect
     var editing by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    var todayDate by remember { mutableStateOf(LocalDate.now().toString()) }
     var taskId by rememberSaveable { mutableStateOf<String?>(null) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.ensureDays(); vm.refreshReminders() }
     LaunchedEffect(state?.profile != null) {
         if (state?.profile != null) {
             vm.ensureDays()
-            while(true) { delay(60_000); vm.ensureDays() }
+            while(true) { delay(60_000); todayDate=LocalDate.now().toString(); vm.ensureDays() }
         }
     }
+    LaunchedEffect(todayDate) { if(selectedDate < todayDate) selectedDate=todayDate }
     val snack = remember { SnackbarHostState() }
     LaunchedEffect(message) { message?.let { snack.showSnackbar(it); vm.dismissMessage() } }
     Scaffold(snackbarHost={SnackbarHost(snack)}, bottomBar={
@@ -40,7 +42,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
             titles.forEachIndexed { i, title -> NavigationBarItem(selected=tab==i, onClick={tab=i}, icon={Icon(icons[i], title)}, label={Text(title)}) }
         }
     }) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
+        Box(Modifier.fillMaxSize().padding(padding).imePadding()) {
             val current = state
             if (current == null) CircularProgressIndicator(Modifier.padding(32.dp))
             else if (current.profile == null || editing) Onboarding(initial=current.profile ?: com.wellio.app.domain.UserProfile(), editing=editing, busy=busy,
@@ -59,6 +61,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
                     }
                 }
             }
+            if(busy && current?.profile != null && !editing) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
     }
     LaunchedEffect(state?.profile) { if (state?.profile != null) editing=false }

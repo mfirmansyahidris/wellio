@@ -10,13 +10,14 @@ import com.google.firebase.ai.type.generationConfig
 import com.wellio.app.BuildConfig
 import com.wellio.app.data.stateJson
 import com.wellio.app.domain.*
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.encodeToString
 import java.time.LocalDate
 
 class FirebasePlanner(private val context: Context) {
     val configured: Boolean get() = FirebaseApp.getApps(context).isNotEmpty()
-    private suspend fun request(profile: UserProfile, schema: Schema, instruction: String): String = withTimeout(90_000) {
+    private suspend fun request(profile: UserProfile, schema: Schema, instruction: String): String = withTimeoutOrNull(90_000) {
         check(configured && profile.aiEnabled) { "Cloud AI isn't connected or enabled. Your saved plan is unchanged." }
         val model = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
             modelName = BuildConfig.WELLIO_AI_MODEL,
@@ -38,9 +39,12 @@ class FirebasePlanner(private val context: Context) {
             Preference JSON: ${stateJson.encodeToString(profile.copy(name = ""))}
             Task: $instruction
         """.trimIndent()
-        model.generateContent(prompt).text?.takeIf { it.isNotBlank() && it.length <= 250000 }
+        val response = try { model.generateContent(prompt) }
+        catch (e: CancellationException) { throw e }
+        catch (_: Exception) { error("Cloud AI couldn't prepare this plan. Check your connection and try again. Your saved plan is unchanged.") }
+        response.text?.takeIf { it.isNotBlank() && it.length <= 250000 }
             ?: error("AI returned no usable plan. Your saved plan is unchanged.")
-    }
+    } ?: error("Cloud AI took too long. Please try again. Your saved plan is unchanged.")
     suspend fun week(p: UserProfile, start: LocalDate): List<DayPlan> {
         val text=request(p, Schemas.week, "Generate exactly seven days from $start through ${start.plusDays(6)} inclusive. Dates use YYYY-MM-DD. Vary meals and alternate gentle strength and lighter movement.")
         return PlanValidation.week(stateJson.decodeFromString<WeekDraft>(text),p,start)

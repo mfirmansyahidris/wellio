@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,7 +29,7 @@ import java.util.Locale
 fun kindIcon(kind: TaskKind) = when(kind) {
     TaskKind.WORKOUT -> Icons.Outlined.FitnessCenter
     TaskKind.WATER -> Icons.Outlined.WaterDrop
-    TaskKind.WALK -> Icons.Outlined.DirectionsWalk
+    TaskKind.WALK -> Icons.AutoMirrored.Outlined.DirectionsWalk
     TaskKind.WIND_DOWN -> Icons.Outlined.DarkMode
     else -> Icons.Outlined.Restaurant
 }
@@ -83,7 +85,7 @@ fun kindIcon(kind: TaskKind) = when(kind) {
             Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment=Alignment.CenterVertically) {
                 Icon(Icons.Outlined.Restaurant, null, Modifier.size(32.dp), tint=Forest)
                 Column(Modifier.weight(1f).padding(horizontal=16.dp)) { Text("Nourish your day", style=MaterialTheme.typography.titleLarge); Text("Four simple meal ideas", fontSize=13.sp) }
-                Icon(Icons.Outlined.ArrowForward, "View meals")
+                Icon(Icons.AutoMirrored.Outlined.ArrowForward, "View meals")
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement=Arrangement.SpaceBetween) { Eyebrow("Your daily routine"); Text(day.source, fontSize=11.sp, color=Forest) }
@@ -108,13 +110,13 @@ fun kindIcon(kind: TaskKind) = when(kind) {
     var time by rememberSaveable(task.id) { mutableStateOf(task.time) }
     val valid = Regex("([01][0-9]|2[0-3]):[0-5][0-9]").matches(time)
     AlertDialog(onDismissRequest=dismiss, title={Text(task.title)}, text={
-        Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement=Arrangement.spacedBy(12.dp)) {
             Text("${task.time} · ${task.status.name.lowercase()}")
             Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 Button({update(Status.COMPLETED, null)}, enabled=!isFuture) { Text("Done") }
                 OutlinedButton({update(Status.SKIPPED, null)}, enabled=!isFuture) { Text("Skip") }
             }
-            OutlinedTextField(time, {time=it}, label={Text("Time today (HH:mm)")}, singleLine=true, isError=!valid, modifier=Modifier.fillMaxWidth())
+            OutlinedTextField(time, {time=it}, label={Text("Time (HH:mm)")}, singleLine=true, isError=!valid, modifier=Modifier.fillMaxWidth())
             OutlinedButton({update(Status.RESCHEDULED, time)}, enabled=valid) { Text("Reschedule") }
             Row(verticalAlignment=Alignment.CenterVertically) {
                 Text("Remind me", Modifier.weight(1f))

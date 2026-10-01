@@ -15,11 +15,11 @@ class LocalPlanner {
     }
 
     fun workout(p: UserProfile, seed: Int = 0, reason: String = ""): Workout {
-        val gentle = reason == "Too difficult" || p.activity == "Mostly sitting"
+        val gentle = reason == "Too difficult" || (p.activity == "Mostly sitting" && reason != "Too easy")
         val shorter = reason == "Need something shorter"
-        val minutes = if (shorter) (p.minutes / 2).coerceAtLeast(5) else p.minutes
+        val minutes = if (shorter) (p.minutes / 2).coerceAtLeast(3) else p.minutes
         val useWeights = "Dumbbells" in p.equipment && reason != "Don't have the equipment"
-        val sets = if (minutes <= 10 || gentle) 1 else if (p.level == "Intermediate") 3 else 2
+        val sets = if (minutes <= 10 || gentle) 1 else if (p.level == "Intermediate" || Goal.STRONGER in p.goals) 3 else 2
         val reps = if (gentle) 8 else if (reason == "Too easy") 14 else 12
         val variants = listOf(
             Exercise("Sit-to-stand", sets, reps, instruction = "Use a stable chair. Stand slowly, then sit with control."),
@@ -29,28 +29,35 @@ class LocalPlanner {
             Exercise("Standing calf raise", sets, reps, instruction = "Hold a stable support. Rise onto your toes and lower slowly."),
             Exercise("Standing march", sets, seconds = 40, instruction = "March at a comfortable pace, keeping your shoulders relaxed.")
         )
-        val count = if (minutes <= 10) 3 else 5
+        val count = if (minutes <= 5) 1 else if (minutes <= 10) 3 else if (p.activity == "Very active") 6 else 5
         var chosen = (0 until count).map { variants[Math.floorMod(seed + it, variants.size)] }
         if (useWeights) chosen = chosen.dropLast(1) + Exercise("Dumbbell row", sets, reps,
             instruction = "Choose a comfortable weight. Hinge at the hips, draw elbows back, then lower with control.")
         if (p.location == "Outdoor") chosen = chosen.dropLast(1) + Exercise("Comfortable walk", 1,
             seconds = if (minutes <= 10) 60 else 180, instruction = "Walk on a level path at a pace where you can talk comfortably.")
         val title = if (useWeights) "Everyday strength" else if (Math.floorMod(seed, 2) == 0) "Feel-good full body" else "Move at your pace"
+        val estimate = ((chosen.sumOf { it.sets * (if (it.seconds > 0) it.seconds else it.reps * 3) + (it.sets - 1) * it.restSeconds } + 120 + 59) / 60).coerceAtMost(minutes)
         return Workout(title, "Warm up gently, move at your own pace, and finish with an easy stretch. Stop if a movement hurts.",
-            minutes, if (gentle) "Beginner" else p.level, p.location, if (useWeights) listOf("Dumbbells") else emptyList(), chosen)
+            estimate, if (gentle) "Beginner" else p.level, p.location, if (useWeights) listOf("Dumbbells") else emptyList(), chosen)
     }
     fun meal(p: UserProfile, kind: TaskKind, seed: Int, previous: Meal? = null, reason: String = ""): Meal {
         val pool = Catalog.meals.filter { allowedMeal(it, p) && (if (kind == TaskKind.BREAKFAST) "Breakfast" in it.tags else if (kind == TaskKind.SNACK) "Snack" in it.tags else "Main" in it.tags) }
         val alternatives = pool.filter { it.name != previous?.name }.ifEmpty { pool }
         require(alternatives.isNotEmpty()) { "No local meal matches these food preferences. Adjust foods to avoid or use AI when configured." }
-        val sorted = alternatives.sortedByDescending { m ->
+        fun score(m: Meal): Int =
             (if (m.cuisine == p.cuisine) 4 else 0) +
             (if (("Quick preparation" in p.priorities || reason == "Something quicker") && m.minutes <= 10) 3 else 0) +
             (if (("Budget friendly" in p.priorities || reason == "Something cheaper") && m.budget) 3 else 0) +
             (if (("High protein" in p.priorities || p.diet == "High Protein") && "High protein" in m.tags) 3 else 0) +
             (if ("Lots of vegetables" in p.priorities && "Vegetables" in m.tags) 2 else 0)
+        val reasonMatches = when(reason) {
+            "Something quicker" -> alternatives.filter { it.minutes < (previous?.minutes ?: 121) }
+            "Something cheaper" -> alternatives.filter { it.budget }
+            else -> alternatives
         }
-        val preferred = if (reason in listOf("Something quicker", "Something cheaper") || p.cuisine != "Anything" || p.diet == "High Protein") sorted.take(2) else sorted
+        require(reasonMatches.isNotEmpty()) { "No local alternative fits that request. Your meal is unchanged." }
+        val best = reasonMatches.maxOf(::score)
+        val preferred = reasonMatches.filter { score(it) == best }
         return preferred[Math.floorMod(seed, preferred.size)]
     }
 }
