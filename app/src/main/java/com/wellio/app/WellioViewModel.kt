@@ -12,6 +12,7 @@ import java.time.LocalDate
 class WellioViewModel(application: Application) : AndroidViewModel(application) {
     val store = WellioStore(WellioDatabase.get(application))
     val planner = LocalPlanner()
+    val ai = com.wellio.app.ai.FirebasePlanner(application)
     private val reminders = com.wellio.app.reminders.ReminderScheduler(application)
     private fun observeReminders() {
         viewModelScope.launch {
@@ -38,7 +39,7 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
     }
     fun saveProfile(profile: UserProfile, onSaved: () -> Unit = {}) = action {
         profile.validate()
-        val days = withContext(Dispatchers.Default) { planner.week(profile, LocalDate.now()) }
+        val days = if (profile.aiEnabled) ai.week(profile, LocalDate.now()) else withContext(Dispatchers.Default) { planner.week(profile, LocalDate.now()) }
         store.update { it.copy(profile = profile).mergeDays(days) }
         onSaved()
     }
@@ -78,8 +79,8 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         val day = current.days.first { it.date == date }
         require(day.tasks.none { it.kind == TaskKind.WORKOUT && it.status == Status.COMPLETED }) { "Completed workouts stay in your history." }
         val seed = day.workout.exercises.first().name.hashCode() + 1
-        val alternative = planner.workout(profile, seed, reason)
-        store.update { old -> old.changeDay(date) { it.copy(workout = alternative, session = null,
+        val alternative = if (profile.aiEnabled) ai.workout(profile, day.workout, reason) else planner.workout(profile, seed, reason)
+        store.update { old -> old.changeDay(date) { it.copy(workout = alternative, session = null, source = if(profile.aiEnabled) "AI + saved plan" else "Local + saved plan",
             tasks = it.tasks.map { task -> if (task.kind == TaskKind.WORKOUT) task.copy(title = alternative.title) else task }) } }
     }
 
@@ -89,9 +90,9 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         val day = current.days.first { it.date == date }
         require(day.tasks.none { it.kind == kind && it.status == Status.COMPLETED }) { "Completed meals stay in your history." }
         val meal = day.meals.getValue(kind)
-        val alternative = planner.meal(profile, kind, meal.name.hashCode(), meal, reason)
+        val alternative = if (profile.aiEnabled) ai.meal(profile, kind, meal, reason) else planner.meal(profile, kind, meal.name.hashCode(), meal, reason)
         require(alternative.name != meal.name) { "No other local meal matches your preferences. Your current meal is unchanged." }
-        store.update { old -> old.changeDay(date) { it.copy(meals = it.meals + (kind to alternative),
+        store.update { old -> old.changeDay(date) { it.copy(meals = it.meals + (kind to alternative), source = if(profile.aiEnabled) "AI + saved plan" else "Local + saved plan",
             tasks = it.tasks.map { task -> if (task.kind == kind) task.copy(title = alternative.name) else task }) } }
     }
 
@@ -101,5 +102,16 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         }) } }
     }
     fun refreshReminders() { viewModelScope.launch { try { reminders.reconcile(store.read(), force = true) } catch (e: CancellationException) { throw e } catch (_: Exception) { message.value = "Could not refresh reminders." } } }
+
+    fun enableAi(enabled: Boolean) = action {
+        check(!enabled || ai.configured) { "Cloud AI is not configured." }
+        store.update { it.copy(profile = it.profile?.copy(aiEnabled = enabled)) }
+    }
+    fun generateAiWeek() = action {
+        val profile = store.read().profile ?: return@action
+        val days = ai.week(profile, LocalDate.now())
+        store.update { it.mergeDays(days) }
+        message.value = "Your personalized week is ready."
+    }
 
 }

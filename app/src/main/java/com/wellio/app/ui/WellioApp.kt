@@ -51,7 +51,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
                     0 -> TodayScreen(current, day, {selectedDate=it}, {tab=1}, {tab=2}, {taskId=it.id})
                     1 -> WorkoutScreen(day, busy, {selectedDate=it}, {vm.completeSet(day.date,it)}, {vm.finishWorkout(day.date)}, {vm.replaceWorkout(day.date,it)})
                     2 -> MealsScreen(day, busy, {selectedDate=it}, {kind,reason->vm.replaceMeal(day.date,kind,reason)}, {vm.setTask(day.date,it.id,Status.COMPLETED)})
-                    3 -> ProfileScreen(current, {editing=true})
+                    3 -> ProfileScreen(current, {editing=true}) { AiSettings(current.profile, vm.ai.configured, busy, vm::enableAi, vm::generateAiWeek) }
                 }
                 day?.tasks?.find { it.id == taskId }?.let { task ->
                     TaskDialog(task, LocalDate.parse(day.date).isAfter(LocalDate.now()), {taskId=null}, {vm.setReminder(day.date, task.id, it)}) { status, time ->

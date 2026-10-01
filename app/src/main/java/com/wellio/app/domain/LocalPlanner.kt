@@ -11,17 +11,9 @@ class LocalPlanner {
         val seed = date.toEpochDay().toInt()
         val workout = workout(profile, seed)
         val meals = mealKinds.associateWith { meal(profile, it, seed + it.ordinal) }
-        return DayPlan(date.toString(), workout, meals, listOf(
-            DailyTask("$date-water", TaskKind.WATER, "A glass of water", "07:00"),
-            DailyTask("$date-breakfast", TaskKind.BREAKFAST, meals.getValue(TaskKind.BREAKFAST).name, "07:30"),
-            DailyTask("$date-lunch", TaskKind.LUNCH, meals.getValue(TaskKind.LUNCH).name, "12:30"),
-            DailyTask("$date-walk", TaskKind.WALK, "A little fresh air", "15:00"),
-            DailyTask("$date-snack", TaskKind.SNACK, meals.getValue(TaskKind.SNACK).name, "16:00"),
-            DailyTask("$date-workout", TaskKind.WORKOUT, workout.title, "17:30"),
-            DailyTask("$date-dinner", TaskKind.DINNER, meals.getValue(TaskKind.DINNER).name, "19:00"),
-            DailyTask("$date-winddown", TaskKind.WIND_DOWN, "Slow down & unwind", "22:00")
-        ))
+        return buildDay(date, workout, meals)
     }
+
     fun workout(p: UserProfile, seed: Int = 0, reason: String = ""): Workout {
         val gentle = reason == "Too difficult" || p.activity == "Mostly sitting"
         val shorter = reason == "Need something shorter"
@@ -79,4 +71,17 @@ fun allowedMeal(m: Meal, p: UserProfile): Boolean {
         }
         word.isNotBlank() && aliases.any { it in haystack }
     }
+}
+
+fun buildDay(date: LocalDate, workout: Workout, meals: Map<TaskKind, Meal>, source: String = "Local plan"): DayPlan {
+        return DayPlan(date.toString(), workout, meals, listOf(
+            DailyTask("$date-water", TaskKind.WATER, "A glass of water", "07:00"),
+            DailyTask("$date-breakfast", TaskKind.BREAKFAST, meals.getValue(TaskKind.BREAKFAST).name, "07:30"),
+            DailyTask("$date-lunch", TaskKind.LUNCH, meals.getValue(TaskKind.LUNCH).name, "12:30"),
+            DailyTask("$date-walk", TaskKind.WALK, "A little fresh air", "15:00"),
+            DailyTask("$date-snack", TaskKind.SNACK, meals.getValue(TaskKind.SNACK).name, "16:00"),
+            DailyTask("$date-workout", TaskKind.WORKOUT, workout.title, "17:30"),
+            DailyTask("$date-dinner", TaskKind.DINNER, meals.getValue(TaskKind.DINNER).name, "19:00"),
+            DailyTask("$date-winddown", TaskKind.WIND_DOWN, "Slow down & unwind", "22:00")
+        ), source = source)
 }

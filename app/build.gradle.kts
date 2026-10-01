@@ -13,6 +13,7 @@ android {
         applicationId = "com.wellio.app"
         minSdk = 26
         targetSdk = 36
+        buildConfigField("String", "WELLIO_AI_MODEL", "\"" + providers.gradleProperty("wellioAiModel").getOrElse("gemini-3.8-flash") + "\"")
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -27,6 +28,10 @@ android {
 }
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+    implementation("com.google.firebase:firebase-ai")
+    debugImplementation("com.google.firebase:firebase-appcheck-debug")
+    releaseImplementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation(platform("androidx.compose:compose-bom:2025.05.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.material3:material3")
