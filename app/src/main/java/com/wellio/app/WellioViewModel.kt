@@ -48,4 +48,28 @@ class WellioViewModel(application: Application) : AndroidViewModel(application) 
         }) } }
     }
 
+    fun completeSet(date: String, expected: Int) = action {
+        store.update { current -> current.changeDay(date) { day ->
+            val total = day.workout.exercises.sumOf { it.sets }
+            val count = day.session?.completedSets ?: 0
+            if (count != expected || count >= total) day else day.copy(session = SessionProgress(day.workout.title, count + 1))
+        } }
+    }
+    fun finishWorkout(date: String) = action {
+        store.update { current -> current.changeDay(date) { day ->
+            if ((day.session?.completedSets ?: 0) < day.workout.exercises.sumOf { it.sets }) day
+            else day.copy(tasks = day.tasks.map { if (it.kind == TaskKind.WORKOUT) it.copy(status = Status.COMPLETED) else it })
+        } }
+    }
+    fun replaceWorkout(date: String, reason: String) = action {
+        val current = store.read()
+        val profile = current.profile ?: return@action
+        val day = current.days.first { it.date == date }
+        require(day.tasks.none { it.kind == TaskKind.WORKOUT && it.status == Status.COMPLETED }) { "Completed workouts stay in your history." }
+        val seed = day.workout.exercises.first().name.hashCode() + 1
+        val alternative = planner.workout(profile, seed, reason)
+        store.update { old -> old.changeDay(date) { it.copy(workout = alternative, session = null,
+            tasks = it.tasks.map { task -> if (task.kind == TaskKind.WORKOUT) task.copy(title = alternative.title) else task }) } }
+    }
+
 }
