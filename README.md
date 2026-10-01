@@ -20,6 +20,8 @@ From a terminal with suitable `JAVA_HOME` and `ANDROID_HOME` values:
 
 The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. The Gradle Wrapper is included. Dependency versions are pinned for reproducible builds; the project does not claim to use every latest release.
 
+Release artwork is stored in `release-assets/`. The 512 × 512 PNG is intended for the Google Play listing. Android launcher resources include adaptive and monochrome variants.
+
 ## Available features
 
 - Short onboarding for up to two goals, activity, experience, available time, location, equipment, diet, cuisine, priorities, and foods to avoid.
