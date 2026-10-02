@@ -39,3 +39,10 @@ The application APK and AndroidTest APK were installed on a dedicated developmen
 - Notification delivery on a physical device, vendor battery restrictions, reboot behavior, and timezone changes have not been tested end to end.
 - There is no signed release build, Play Store publication, comprehensive accessibility audit, or production-readiness claim.
 - Cloud connectivity, App Check enforcement, quotas, and billing still require testing in Firebase Console.
+
+## Release DEX optimization (October 2, 2026)
+
+- Enabled R8 code shrinking, optimization and obfuscation, plus resource shrinking for the release build. Increased the app version to `0.1.1` / version code `2` for the replacement bundle.
+- `:app:bundleRelease` passed in local mode. The local `google-services.json` still targets the old package, so it was temporarily moved aside for this check and restored afterward; it remains ignored by Git.
+- The generated AAB contains R8 metadata and a `mapping.txt`. R8 reports `noObfuscationPercentage` of 12.62% for this build. This is build metadata, not Play Console's final score; verify the reported category after uploading the new AAB.
+- The generated local AAB is unsigned because this Gradle build does not configure the upload keystore. Sign the replacement with the same Play upload key before uploading, and retain the matching `mapping.txt` for crash analysis.

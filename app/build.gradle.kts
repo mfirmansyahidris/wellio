@@ -14,11 +14,18 @@ android {
         minSdk = 26
         targetSdk = 36
         buildConfigField("String", "WELLIO_AI_MODEL", "\"" + providers.gradleProperty("wellioAiModel").getOrElse("gemini-3.8-flash") + "\"")
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true; buildConfig = true }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
