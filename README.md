@@ -1,5 +1,18 @@
 # Wellio
 
+**An offline-first Android wellness app with optional AI-assisted planning.**
+
+[Developer portfolio](https://mfirmansyahidris.github.io/portfolio/) · [Architecture decisions](docs/ARCHITECTURE.md) · [Validation record](docs/VALIDATION.md)
+
+| Built with | Engineering highlights |
+| --- | --- |
+| Kotlin, Android, Room, WorkManager, Firebase AI Logic | On-device persistence, resumable workout sessions, reminders, validated AI responses and local fallback behavior |
+
+Core planning works without an account or cloud AI. Explore the architecture and validation notes above for implementation decisions and recorded checks.
+
+---
+
+
 **Small steps. A healthier you.** Wellio is an Android wellness application based on the supplied product concept. It provides a daily plan, gentle movement, meal ideas, routines, reminders, and simple progress tracking.
 
 Android application ID and namespace: `fi.dev.wellio`.
