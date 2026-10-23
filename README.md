@@ -10,6 +10,45 @@
 
 Core planning works without an account or cloud AI. Explore the architecture and validation notes above for implementation decisions and recorded checks.
 
+## Screenshots & short walkthrough
+
+Real Android emulator captures already included in this repository.
+
+<p align="center">
+  <a href="release-assets/store-screenshots/raw/today.png"><img src="release-assets/store-screenshots/raw/today.png" width="23%" alt="Today screenshot" /></a>
+  <a href="release-assets/store-screenshots/raw/workout.png"><img src="release-assets/store-screenshots/raw/workout.png" width="23%" alt="Workout screenshot" /></a>
+  <a href="release-assets/store-screenshots/raw/meals.png"><img src="release-assets/store-screenshots/raw/meals.png" width="23%" alt="Meals screenshot" /></a>
+  <a href="release-assets/store-screenshots/raw/profile.png"><img src="release-assets/store-screenshots/raw/profile.png" width="23%" alt="Profile screenshot" /></a>
+</p>
+
+**32-second screen walkthrough:** Today → Workout → Meals → Profile. Each screen is shown for eight seconds. This is a sequence of real screenshots, not a continuous interaction recording. It does not demonstrate live AI requests.
+
+[Open the MP4 walkthrough](docs/portfolio/walkthrough.mp4)
+
+<details>
+<summary>Play the animated screen preview</summary>
+
+<img src="docs/portfolio/preview.gif" width="300" alt="Animated screenshot walkthrough: Today, Workout, Meals, Profile" />
+
+</details>
+
+## Engineering case study
+
+**Problem:** keep a daily wellness plan useful without an account or a reliable connection, while allowing optional AI-assisted changes without losing saved progress.
+
+**Implementation scope:** native Android UI, local planning and persistence, resumable workout state, background reminders, and an optional AI boundary.
+
+| Decision | Why it matters | Evidence |
+| --- | --- | --- |
+| Room with transactional updates and Flow-backed UI | Concurrent progress updates and plan changes should preserve both operations. A versioned JSON aggregate favors atomic writes over SQL analytics in this MVP. | [Architecture](docs/ARCHITECTURE.md), [WellioStore](app/src/main/java/fi/dev/wellio/data/WellioStore.kt) |
+| Local planning first; validate AI output before persistence | A timeout or malformed response must not replace a working saved plan. AI is an explicit opt-in. | [Plan validation](app/src/main/java/fi/dev/wellio/ai/PlanValidation.kt), [local planner](app/src/main/java/fi/dev/wellio/domain/LocalPlanner.kt) |
+| WorkManager for reminders | Reminders can be reconciled with task status; delivery is approximate rather than an exact alarm. | [Reminder checks](app/src/androidTest/java/fi/dev/wellio/ReminderTest.kt) |
+| Persist session and task state | Users can resume a workout after recreating the app instead of starting over. | [ViewModel](app/src/main/java/fi/dev/wellio/WellioViewModel.kt), [UI flow checks](app/src/androidTest/java/fi/dev/wellio/WellioFlowTest.kt) |
+
+**Recorded validation:** the repository's [validation record](docs/VALIDATION.md) reports 14 unit tests and 4 instrumentation tests passing on October 1, 2026. Package migration and release optimization have separate checks and limits in that record. Those are historical results, not a fresh test run performed for this portfolio update.
+
+**Trade-offs:** local data has no cloud sync; catalog coverage is intentionally limited. Live cloud-AI behavior and physical-device reminder delivery still need the checks listed in the validation record.
+
 ---
 
 
